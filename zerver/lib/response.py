@@ -61,6 +61,6 @@ def json_response_from_error(exception):
                          data=exception.data,
                          status=exception.http_status_code)
 
-def json_error(msg, data=None, status=400):
-    # type: (Text, Optional[Dict[str, Any]], int) -> HttpResponse
-    return json_response(res_type="error", msg=msg, data=data, status=status)
+def json_error(msg, status=400):
+    # type: (Text, int) -> HttpResponse
+    return json_response(res_type="error", msg=msg, status=status)
