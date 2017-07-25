@@ -23,8 +23,9 @@ from confirmation.models import Confirmation, create_confirmation_link
 from zerver.context_processors import zulip_default_context
 from zerver.forms import HomepageForm, OurAuthenticationForm, \
     WRONG_SUBDOMAIN_ERROR
+from zerver.lib.exceptions import JsonableError, ErrorCode
 from zerver.lib.mobile_auth_otp import is_valid_otp, otp_encrypt_api_key
-from zerver.lib.request import REQ, has_request_variables, JsonableError
+from zerver.lib.request import REQ, has_request_variables
 from zerver.lib.response import json_success, json_error
 from zerver.lib.utils import get_subdomain, is_subdomain_root_or_alias
 from zerver.lib.validator import validate_login_email
@@ -476,6 +477,16 @@ def dev_direct_login(request, **kwargs):
     return HttpResponseRedirect("%s%s" % (settings.EXTERNAL_URI_SCHEME,
                                           request.get_host()))
 
+class ApiLoginError(JsonableError):
+    http_status_code = 403
+    code = ErrorCode.API_LOGIN_FAILED
+    data_fields = ['reason']
+
+    def __init__(self, msg, reason):
+        # type: (Text, str) -> None
+        self._msg = msg  # type: Text
+        self.reason = reason  # type: str
+
 @csrf_exempt
 @require_post
 @has_request_variables
@@ -499,14 +510,11 @@ def api_dev_fetch_api_key(request, username=REQ()):
                                 realm_subdomain=get_subdomain(request),
                                 return_data=return_data)
     if return_data.get("inactive_realm"):
-        return json_error(_("Your realm has been deactivated."),
-                          data={"reason": "realm deactivated"}, status=403)
+        raise ApiLoginError(_("Your realm has been deactivated."), "realm deactivated")
     if return_data.get("inactive_user"):
-        return json_error(_("Your account has been disabled."),
-                          data={"reason": "user disable"}, status=403)
+        raise ApiLoginError(_("Your account has been disabled."), "user disable")
     if user_profile is None:
-        return json_error(_("This user is not registered."),
-                          data={"reason": "unregistered"}, status=403)
+        raise ApiLoginError(_("This user is not registered."), "unregistered")
     login(request, user_profile)
     return json_success({"api_key": user_profile.api_key, "email": user_profile.email})
 
@@ -540,21 +548,16 @@ def api_fetch_api_key(request, username=REQ(), password=REQ()):
                                     realm_subdomain=get_subdomain(request),
                                     return_data=return_data)
     if return_data.get("inactive_user"):
-        return json_error(_("Your account has been disabled."),
-                          data={"reason": "user disable"}, status=403)
+        raise ApiLoginError(_("Your account has been disabled."), "user disable")
     if return_data.get("inactive_realm"):
-        return json_error(_("Your realm has been deactivated."),
-                          data={"reason": "realm deactivated"}, status=403)
+        raise ApiLoginError(_("Your realm has been deactivated."), "realm deactivated")
     if return_data.get("password_auth_disabled"):
-        return json_error(_("Password auth is disabled in your team."),
-                          data={"reason": "password auth disabled"}, status=403)
+        raise ApiLoginError(_("Password auth is disabled in your team."), "password auth disabled")
     if user_profile is None:
         if return_data.get("valid_attestation"):
             # We can leak that the user is unregistered iff they present a valid authentication string for the user.
-            return json_error(_("This user is not registered; do so from a browser."),
-                              data={"reason": "unregistered"}, status=403)
-        return json_error(_("Your username or password is incorrect."),
-                          data={"reason": "incorrect_creds"}, status=403)
+            raise ApiLoginError(_("This user is not registered; do so from a browser."), "unregistered")
+        raise ApiLoginError(_("Your username or password is incorrect."), "incorrect_creds")
 
     # Maybe sending 'user_logged_in' signal is the better approach:
     #   user_logged_in.send(sender=user_profile.__class__, request=request, user=user_profile)
