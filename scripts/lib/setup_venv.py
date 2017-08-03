@@ -43,6 +43,8 @@ VENV_DEPENDENCIES = [
 def install_venv_deps(requirements_file):
     # type: (str) -> None
     pip_requirements = os.path.join(ZULIP_PATH, "requirements", "pip.txt")
+    print('PATH {}'.format(os.environ['PATH']))
+    run(["pip", "--version"])
     run(["pip", "install", "-U", "--requirement", pip_requirements])
     run(["pip", "install", "--no-deps", "--requirement", requirements_file])
 
