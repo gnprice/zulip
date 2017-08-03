@@ -8,8 +8,11 @@ print('''\
 build_emoji:
   sys.executable {}
   sys.path {}
-'''.format(sys.executable, sys.path))
 
+Searching sys.path for `*ujson*`:
+'''.format(sys.executable, sys.path))
+import subprocess
+subprocess.call(['find'] + sys.path + ['-name', '*ujson*'])
 
 import os
 import glob
