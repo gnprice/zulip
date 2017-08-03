@@ -3,6 +3,14 @@
 # See docs/emoji.md for a high-level explanation of how this system
 # works.
 from __future__ import division, print_function
+import sys
+print('''\
+build_emoji:
+  sys.executable {}
+  sys.path {}
+'''.format(sys.executable, sys.path))
+
+
 import os
 import glob
 import shutil
