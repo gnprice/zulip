@@ -12,11 +12,9 @@ class zulip_ops::postgres_common {
   package { $internal_postgres_packages: ensure => "installed" }
 
   exec {"pip_wal-e":
-    command  => "/usr/bin/pip install git+git://github.com/zbenjamin/wal-e.git#egg=wal-e",
+    command  => "/usr/bin/pip3 install wal-e==1.0.3",
     creates  => "/usr/local/bin/wal-e",
     require  => Package['python3-pip',
-                        # 'python3-boto', 'python3-gevent', # missing on trusty
-                        'python-pip', 'python-boto', 'python-gevent',
                         'lzop', 'pv'],
   }
 
