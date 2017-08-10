@@ -1,20 +1,58 @@
 #!/bin/bash
-set -ex
+set -e
 
-echo "This is not a real script yet.  Read and run bits by hand." >&2
-exit 1
+usage() {
+    echo "Usage: $0 {trusty|xenial} <NAME>" >&2
+    exit 1
+}
+
+args="$(getopt -o '' -l '' -n "$0" -- "$@")"
+eval "set -- $args"
+
+while true; do
+    case "$1" in
+        --) shift; break;;
+        *) usage;;
+    esac
+done
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+    usage
+fi
 
 RELEASE="$1"
+NAME="$2"
 
-# 0. Run as root.
+case "$RELEASE" in
+    trusty|xenial) ;;
+    *) usage;;
+esac
 
-# 1. set up schroot
-CHROOT_DIR=...
-CHROOT_NAME=...
+if [ "$(id -u)" != 0 ]; then
+    echo "Need to be root." >&2
+    exit 1
+fi
 
-# 2. debootstrap the image
+set -x
+
+BASE_PATH=/srv/zulip-chroots
+mkdir -p "$BASE_PATH"
+
+CHROOT_DIR="$BASE_PATH"/"$NAME"
+
 apt install ubuntu-archive-keyring
 debootstrap "$RELEASE" "$CHROOT_DIR" http://archive.ubuntu.com/ubuntu
+
+
+
+exit 0
+
+
+
+
+## WIP MAYBE OBSOLETE
+
+
 
 # 3. basic config
 
