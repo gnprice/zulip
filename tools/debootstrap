@@ -43,7 +43,19 @@ CHROOT_DIR="$BASE_PATH"/"$NAME"
 apt install ubuntu-archive-keyring
 debootstrap "$RELEASE" "$CHROOT_DIR" http://archive.ubuntu.com/ubuntu
 
+# See https://wiki.archlinux.org/index.php/Systemd-nspawn .
+run () {
+    systemd-nspawn -D "$CHROOT_DIR" -- "$@"
+}
 
+run passwd root -d
+
+cat >"$CHROOT_DIR"/etc/apt/sources.list <<EOF
+deb http://archive.ubuntu.com/ubuntu $RELEASE main universe
+deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main universe
+EOF
+run apt update
+run apt install systemd-services systemd-shim wget
 
 exit 0
 
@@ -56,22 +68,6 @@ exit 0
 
 # 3. basic config
 
-# See https://lists.debian.org/debian-user/2012/07/msg01381.html .
-# Though https://superuser.com/questions/688733/start-a-systemd-service-inside-chroot
-# may ultimately be more relevant -- especially as I have systemd on
-# the outside.
-cat >"$CHROOT_DIR"/usr/sbin/policy-rc.d <<EOF
-#!/bin/sh
-exit 101
-EOF
-chmod +x "$CHROOT_DIR"/usr/sbin/policy-rc.d
-
-cat >"$CHROOT_DIR"/etc/apt/sources.list <<EOF
-deb http://archive.ubuntu.com/ubuntu $RELEASE main universe
-deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main universe
-EOF
-schroot -c "$CHROOT_NAME" -- apt update
-schroot -c "$CHROOT_NAME" -- apt install systemd-services systemd-shim wget
 
 # 4. profit?!
 
