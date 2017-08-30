@@ -1,0 +1,12 @@
+#!/bin/bash
+set -ex
+
+# See https://github.com/circleci/circleci-images/blob/master/shared/images/Dockerfile-basic.template
+
+ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime
+locale-gen C.UTF-8 || true
+
+groupadd --gid 3434 circleci
+useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci
+echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci
+echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep

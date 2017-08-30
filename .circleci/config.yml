@@ -29,6 +29,8 @@ jobs:
             # Install moreutils so we can use `ts` and `mispipe` in the following.
             sudo ./tools/travis/install-moreutils
 
+            sudo ./tools/travis/setup-circleci
+
             # This is the main setup job for the test suite
             mispipe "tools/travis/setup-backend" ts
 
