@@ -6,6 +6,22 @@ version: 2
 jobs:
   build:
     docker:
+
+##
+## TODO:
+##  * The `circleci` images, e.g. `circleci/python:3.4.6`, are on Debian Jessie.
+##  * So we need to use a different Docker image to get Ubuntu 14.04 and 16.04.
+##  * There is https://store.docker.com/images/ubuntu , but those images are
+##    super minimal.  We'll need our own customizations on top.
+##    Those can follow what CircleCI does [here](https://github.com/circleci/circleci-images/blob/master/shared/images/Dockerfile-basic.template),
+##    but in particular we need:
+##     * A non-root user to run as.  This is a pain to try to do in
+##       setup, because by then we've already cloned the repo.
+##     * `git`
+##     * See also https://circleci.com/docs/2.0/custom-images/#adding-required-and-custom-tools-or-files
+##       or just the `apt-get install` command in that Dockerfile template.
+##
+
       - image: ubuntu:14.04
 
       # Specify service dependencies here if necessary
