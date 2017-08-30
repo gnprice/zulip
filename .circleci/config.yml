@@ -1,0 +1,62 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: circleci/python:3.4.3
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      - image: circleci/postgres:9.3
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            # Install moreutils so we can use `ts` and `mispipe` in the following.
+            sudo ./tools/travis/install-moreutils
+
+            # Install codecov, the library for the code coverage reporting tool we use
+            # With a retry to minimize impact of transient networking errors.
+            mispipe "pip install codecov" ts || mispipe "pip install codecov" ts
+
+            # This is the main setup job for the test suite
+            mispipe "tools/travis/setup-backend" ts
+
+            # Clean any caches that are not in use to avoid our cache
+            # becoming huge.
+            mispipe "scripts/clean-unused-caches --threshold 0" ts
+
+      - save_cache:
+          paths:
+            - $HOME/zulip-venv-cache
+            - $HOME/zulip-npm-cache
+            - $HOME/zulip-emoji-cache
+            - $HOME/node
+          key: v1-dependencies
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            mispipe ./tools/travis/backend ts
+
+      # - store_artifacts:
+      #     path: var/casper/
+      #     destination: test-reports
