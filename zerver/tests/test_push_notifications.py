@@ -581,8 +581,8 @@ class TestAPNs(PushNotificationTest):
                     "APNs: Success sending for user %d to device %s",
                     self.user_profile.id, device.token)
 
-class TestGetAlertFromMessage(PushNotificationTest):
-    def test_get_alert_from_private_group_message(self):
+class TestGetAlertTitle(PushNotificationTest):
+    def test_private_group_message(self):
         # type: () -> None
         message = self.get_message(Recipient.HUDDLE)
         message.triggers = {
@@ -590,10 +590,10 @@ class TestGetAlertFromMessage(PushNotificationTest):
             'mentioned': False,
             'stream_push_notify': False,
         }
-        alert = apn.get_alert_from_message(message)
+        alert = apn.get_alert_title(message)
         self.assertEqual(alert, "New private group message from King Hamlet")
 
-    def test_get_alert_from_private_message(self):
+    def test_private_message(self):
         # type: () -> None
         message = self.get_message(Recipient.PERSONAL)
         message.triggers = {
@@ -601,10 +601,10 @@ class TestGetAlertFromMessage(PushNotificationTest):
             'mentioned': False,
             'stream_push_notify': False,
         }
-        alert = apn.get_alert_from_message(message)
+        alert = apn.get_alert_title(message)
         self.assertEqual(alert, "New private message from King Hamlet")
 
-    def test_get_alert_from_mention(self):
+    def test_mention(self):
         # type: () -> None
         message = self.get_message(Recipient.STREAM)
         message.triggers = {
@@ -612,10 +612,10 @@ class TestGetAlertFromMessage(PushNotificationTest):
             'mentioned': True,
             'stream_push_notify': False,
         }
-        alert = apn.get_alert_from_message(message)
+        alert = apn.get_alert_title(message)
         self.assertEqual(alert, "New mention from King Hamlet")
 
-    def test_get_alert_from_stream_message(self):
+    def test_stream_message(self):
         # type: () -> None
         message = self.get_message(Recipient.STREAM)
         message.triggers = {
@@ -624,22 +624,8 @@ class TestGetAlertFromMessage(PushNotificationTest):
             'stream_push_notify': True,
         }
         message.stream_name = 'Denmark'
-        alert = apn.get_alert_from_message(message)
+        alert = apn.get_alert_title(message)
         self.assertEqual(alert, "New stream message from King Hamlet in Denmark")
-
-    def test_get_alert_from_other_message(self):
-        # type: () -> None
-        message = self.get_message(0)
-        message.triggers = {
-            'private_message': False,
-            'mentioned': False,
-            'stream_push_notify': False,
-        }
-        alert = apn.get_alert_from_message(message)
-        alert = apn.get_alert_from_message(self.get_message(0))
-        self.assertEqual(alert,
-                         "New Zulip mentions and private messages from King "
-                         "Hamlet")
 
 class TestGetAPNsPayload(PushNotificationTest):
     def test_get_apns_payload(self):

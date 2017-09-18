@@ -323,10 +323,10 @@ def remove_push_device_token(user_profile, token_str, kind):
 # Push notifications in general
 #
 
-def get_alert_from_message(message):
+def get_alert_title(message):
     # type: (Message) -> Text
     """
-    Determine what alert string to display based on the missed messages.
+    Determine what title to display for an alert on this message.
     """
     sender_str = message.sender.full_name
     if message.recipient.type == Recipient.HUDDLE and message.triggers['private_message']:
@@ -345,7 +345,7 @@ def get_apns_payload(message):
     # type: (Message) -> Dict[str, Any]
     return {
         'alert': {
-            'title': get_alert_from_message(message),
+            'title': get_alert_title(message),
             'body': message.content[:200],
         },
         # TODO: set badge count in a better way
@@ -367,7 +367,7 @@ def get_gcm_payload(user_profile, message):
     android_data = {
         'user': user_profile.email,
         'event': 'message',
-        'alert': get_alert_from_message(message),
+        'alert': get_alert_title(message),
         'zulip_message_id': message.id,  # message_id is reserved for CCS
         'time': datetime_to_timestamp(message.pub_date),
         'content': content,
