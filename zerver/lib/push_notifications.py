@@ -329,17 +329,15 @@ def get_alert_title(message):
     Determine what title to display for an alert on this message.
     """
     sender_str = message.sender.full_name
-    if message.recipient.type == Recipient.HUDDLE and message.triggers['private_message']:
+    if message.recipient.type == Recipient.HUDDLE:
         return "New private group message from %s" % (sender_str,)
-    elif message.recipient.type == Recipient.PERSONAL and message.triggers['private_message']:
+    elif message.recipient.type == Recipient.PERSONAL:
         return "New private message from %s" % (sender_str,)
-    elif message.recipient.type == Recipient.STREAM and message.triggers['mentioned']:
+    elif message.triggers['mentioned']:
         return "New mention from %s" % (sender_str,)
-    elif (message.recipient.type == Recipient.STREAM and
-            (message.triggers['stream_push_notify'] and message.stream_name)):
-        return "New stream message from %s in %s" % (sender_str, message.stream_name,)
     else:
-        return "New Zulip mentions and private messages from %s" % (sender_str,)
+        assert message.stream_name is not None
+        return "New stream message from %s in %s" % (sender_str, message.stream_name,)
 
 def get_apns_payload(message):
     # type: (Message) -> Dict[str, Any]

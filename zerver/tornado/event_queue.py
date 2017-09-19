@@ -687,9 +687,12 @@ def process_message_event(event_template, users):
             if sender_queue_id is not None and client.event_queue.id == sender_queue_id:
                 send_to_clients[client.event_queue.id]['is_sender'] = True
 
+        if user_profile_id == sender_id:
+            continue
+
         # If the recipient was offline and the message was a single or group PM to them
         # or they were @-notified potentially notify more immediately
-        private_message = message_type == "private" and user_profile_id != sender_id
+        private_message = message_type == "private"
         mentioned = 'mentioned' in flags
         stream_push_notify = user_data.get('stream_push_notify', False)
 
