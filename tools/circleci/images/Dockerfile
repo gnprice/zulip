@@ -19,16 +19,8 @@
 # (but much simpler, with a couple of packages from the distro), and
 # then borrows from the CircleCI Dockerfile.
 
-FROM buildpack-deps:trusty-scm  # TODO add xenial
-
-CMD ["/bin/sh"]
-
-USER circleci
-
-RUN groupadd --gid 3434 circleci \
-  && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
-  && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
-  && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
+# TODO add xenial
+FROM buildpack-deps:trusty-scm
 
 RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90circleci \
   && echo 'DPkg::Options "--force-confnew";' >> /etc/apt/apt.conf.d/90circleci
@@ -73,3 +65,12 @@ RUN DOCKERIZE_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
   && tar -C /usr/local/bin -xzvf /tmp/dockerize-linux-amd64.tar.gz \
   && rm -rf /tmp/dockerize-linux-amd64.tar.gz \
   && dockerize --version
+
+RUN groupadd --gid 3434 circleci \
+  && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
+  && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
+  && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
+
+USER circleci
+
+CMD ["/bin/sh"]
