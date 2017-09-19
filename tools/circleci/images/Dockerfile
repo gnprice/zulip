@@ -19,7 +19,8 @@
 # (but much simpler, with a couple of packages from the distro), and
 # then borrows from the CircleCI Dockerfile.
 
-FROM buildpack-deps:trusty  # TODO add xenial
+# TODO add xenial
+FROM buildpack-deps:trusty-scm
 
 RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90circleci \
   && echo 'DPkg::Options "--force-confnew";' >> /etc/apt/apt.conf.d/90circleci
@@ -27,21 +28,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
   && apt-get install -y \
-    git mercurial xvfb \
-    locales sudo openssh-client ca-certificates tar gzip parallel \
-    net-tools netcat unzip zip bzip2 \
-    python3 python3-pip
-
-RUN ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime
-
-RUN locale-gen C.UTF-8 || true
+    xvfb \
+    parallel \
+    netcat unzip zip jq \
+    python3-pip \
+  && ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime \
+  && { locale-gen C.UTF-8 || true; }
 ENV LANG=C.UTF-8
-
-RUN JQ_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linux-amd64/jq-latest" \
-  && curl --silent --show-error --location --fail --retry 3 --output /usr/bin/jq $JQ_URL \
-  && chmod +x /usr/bin/jq \
-  && jq --version
-
 
 # Install Docker.  This logic comes from Circle's Dockerfile; it's probably
 # faster than the upstream-recommended approach of using their apt repo,
