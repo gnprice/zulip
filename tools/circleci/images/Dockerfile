@@ -19,7 +19,7 @@
 # (but much simpler, with a couple of packages from the distro), and
 # then borrows from the CircleCI Dockerfile.
 
-FROM buildpack-deps:trusty  # TODO add xenial
+FROM buildpack-deps:trusty-scm  # TODO add xenial
 
 CMD ["/bin/sh"]
 
@@ -36,8 +36,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
   && apt-get install -y \
-    git mercurial xvfb \
-    locales sudo openssh-client ca-certificates tar gzip parallel \
+    xvfb \
+    locales sudo tar gzip parallel \
     net-tools netcat unzip zip bzip2 jq \
     python3 python3-pip \
   && ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime \
