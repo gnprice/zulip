@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 ZULIP_PATH="$(dirname "$0")/../.."
 ZULIP_SRV="/srv"
