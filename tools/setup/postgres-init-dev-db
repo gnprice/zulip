@@ -48,6 +48,9 @@ if ! pg_isready -U "$DEFAULT_USER" -q; then
     exit 1
 fi
 
+# NEXT STEP: This is failing with
+# Sep 20 02:27:01 + sudo -i -u postgres psql ''
+# [sudo] password for circleci:
 $ROOT_POSTGRES "$DEFAULT_DB" << EOF
 CREATE USER $USERNAME;
 ALTER USER $USERNAME PASSWORD '$PASSWORD';
