@@ -40,7 +40,7 @@ jobs:
 
             # Clean any caches that are not in use to avoid our cache
             # becoming huge.
-            # mispipe "scripts/clean-unused-caches --threshold 0" ts
+            mispipe "scripts/clean-unused-caches --threshold 0" ts
 
       - save_cache:
           paths:
