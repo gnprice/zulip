@@ -316,6 +316,7 @@ def main(options):
         else:
             print("RabbitMQ is already configured.")
 
+        run(["sudo service postgresql start"])
         if options.is_force or not is_template_database_current(
                 migration_status="var/migration_status_dev",
                 settings="zproject.settings",
