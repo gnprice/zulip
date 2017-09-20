@@ -30,14 +30,14 @@ jobs:
             # Install moreutils so we can use `ts` and `mispipe` in the following.
             sudo ./tools/travis/install-moreutils
 
-            sudo ./tools/travis/setup-circleci
+            # TODO codecov
 
             # This is the main setup job for the test suite
-            sudo -u circleci mispipe "tools/travis/setup-backend" ts
+            mispipe "tools/travis/setup-backend" ts
 
             # Clean any caches that are not in use to avoid our cache
             # becoming huge.
-            sudo -u circleci mispipe "scripts/clean-unused-caches --threshold 0" ts
+            mispipe "scripts/clean-unused-caches --threshold 0" ts
 
       - save_cache:
           paths:
@@ -51,7 +51,8 @@ jobs:
       - run:
           name: run tests
           command: |
-            sudo -u circleci '. venv/bin/activate && mispipe ./tools/travis/backend ts'
+            . venv/bin/activate
+            mispipe ./tools/travis/backend ts
 
       # - store_artifacts:
       #     path: var/casper/
