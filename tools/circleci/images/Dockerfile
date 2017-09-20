@@ -74,8 +74,7 @@ RUN apt-get update \
     gettext libffi-dev libfreetype6-dev libz-dev libjpeg-dev \
     libldap2-dev libmemcached-dev python-dev python-pip \
     python-virtualenv python-six libxml2-dev libxslt1-dev libpq-dev \
-    postgresql-9.3 postgresql-9.3-tsearch-extras \
-    postgresql-9.3-pgroonga
+    postgresql-9.3
 
 RUN groupadd --gid 3434 circleci \
   && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
