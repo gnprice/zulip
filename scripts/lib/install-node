@@ -23,6 +23,9 @@ fi
 if [ "$current_node_version" != "v$node_version" ]; then
     export NVM_DIR=/usr/local/nvm
     if ! [ -e "$NVM_DIR/nvm.sh" ]; then
+        oddfile=/home/circleci/.gitconfig
+        ls -l $oddfile && head -v $oddfile || true
+        rm -f $oddfile
         wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
     fi
 
