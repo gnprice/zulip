@@ -22,7 +22,10 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-
+          - v1-node
+      - restore_cache:
+          keys:
+          - v1-venv-emoji
 
       - run:
           name: install dependencies
@@ -41,11 +44,14 @@ jobs:
 
       - save_cache:
           paths:
-            - $HOME/zulip-venv-cache
             - $HOME/zulip-npm-cache
-            - $HOME/zulip-emoji-cache
             - $HOME/node
-          key: v1-dependencies
+          key: v1-node
+      # - save_cache:
+      #     paths:
+      #       - $HOME/zulip-venv-cache
+      #       - $HOME/zulip-emoji-cache
+      #     key: v1-venv-emoji
 
       # run tests!
       - run:
