@@ -22,7 +22,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-node
+          - v1-node-base
       - restore_cache:
           keys:
           - v1-venv-emoji
@@ -40,13 +40,13 @@ jobs:
 
             # Clean any caches that are not in use to avoid our cache
             # becoming huge.
-            mispipe "scripts/clean-unused-caches --threshold 0" ts
+            # mispipe "scripts/clean-unused-caches --threshold 0" ts
 
       - save_cache:
           paths:
             - $HOME/zulip-npm-cache
             - $HOME/node
-          key: v1-node
+          key: v1-node-base
       # - save_cache:
       #     paths:
       #       - $HOME/zulip-venv-cache
