@@ -23,7 +23,7 @@ jobs:
       - run:
           name: create cache directories
           command: |
-              dirs=(/srv/zulip-npm-cache)
+              dirs=(/srv/zulip-{npm,venv}-cache)
               sudo mkdir -p "${dirs[@]}"
               sudo chown -R circleci "${dirs[@]}"
       - restore_cache:
@@ -31,7 +31,7 @@ jobs:
           - v1-node-base1
       - restore_cache:
           keys:
-          - v1-venv-emoji
+          - v1-venv-base1
 
       - run:
           name: install dependencies
@@ -52,11 +52,14 @@ jobs:
           paths:
             - /srv/zulip-npm-cache
           key: v1-node-base1
+      - save_cache:
+          paths:
+            - /srv/zulip-venv-cache
+          key: v1-venv-base1
       # - save_cache:
       #     paths:
-      #       - /srv/zulip-venv-cache
       #       - /srv/zulip-emoji-cache
-      #     key: v1-venv-emoji
+      #     key: v1-emoji-base1
 
       # run tests!
       - run:
