@@ -24,8 +24,8 @@ jobs:
           name: create cache directories
           command: |
               dirs=(/srv/zulip-npm-cache)
-              mkdir -p "${dirs[@]}"
-              chown -R circleci "${dirs[@]}"
+              sudo mkdir -p "${dirs[@]}"
+              sudo chown -R circleci "${dirs[@]}"
       - restore_cache:
           keys:
           - v1-node-base1
