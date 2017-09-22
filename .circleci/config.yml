@@ -20,6 +20,12 @@ jobs:
       - checkout
 
       # Download and cache dependencies
+      - run:
+          name: create cache directories
+          command: |
+              dirs=(/srv/zulip-npm-cache)
+              sudo mkdir -p "${dirs[@]}"
+              sudo chown -R circleci "${dirs[@]}"
       - restore_cache:
           keys:
           - v1-node-base1
