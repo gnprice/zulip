@@ -56,7 +56,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
+            . /srv/zulip-py3-venv/bin/activate
             mispipe ./tools/travis/backend ts
 
       # - store_artifacts:
