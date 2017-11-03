@@ -37,7 +37,8 @@ jobs:
           name: install dependencies
           command: |
             # Install moreutils so we can use `ts` and `mispipe` in the following.
-            sudo ./tools/travis/install-moreutils
+            # sudo ./tools/travis/install-moreutils
+            sudo apt-get install -y moreutils
 
             # TODO codecov
 
