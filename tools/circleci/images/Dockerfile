@@ -1,6 +1,7 @@
 # Dockerfile for a generic Ubuntu 14.04 image with just the basics we need
 # to make it suitable for CI.  In particular:
-#  * a non-root user to run as
+#  * a non-root user to run as (a pain to try to do in setup,
+#    because by then we've already cloned the repo);
 #  * Git and other basic utilities.
 #
 # Based on CircleCI's provided images, but those are on Debian Jessie
