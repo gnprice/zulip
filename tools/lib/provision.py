@@ -295,7 +295,7 @@ def main(options):
     run(["scripts/setup/generate_secrets.py", "--development"])
     run(["tools/update-authors-json", "--use-fixture"])
     run(["tools/inline-email-css"])
-    if is_travis and not options.is_production_travis:
+    if True:  # is_travis and not options.is_production_travis:
         run(["sudo", "service", "rabbitmq-server", "restart"])
         run(["sudo", "service", "redis-server", "restart"])
         run(["sudo", "service", "memcached", "restart"])
