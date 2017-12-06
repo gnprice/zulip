@@ -32,6 +32,16 @@ class RateLimitedObject:
     def rules(self) -> List[Tuple[int, int]]:
         raise NotImplementedError()
 
+class SitewideRateLimit(RateLimitedObject):
+    def __init__(self, domain: str) -> None:
+        self.domain = domain
+
+    def key_fragment(self) -> str:
+        return "sitewide:{}".format(self.domain)
+
+    def rules(self) -> List[Tuple[int, int]]:
+        return settings.RATE_LIMITS_SITEWIDE[self.domain]
+
 class RateLimitedUser(RateLimitedObject):
     def __init__(self, user: UserProfile, domain: Text='all') -> None:
         self.user = user

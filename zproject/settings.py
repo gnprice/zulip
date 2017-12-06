@@ -601,10 +601,25 @@ CACHES = {
 # REDIS-BASED RATE LIMITING CONFIGURATION
 ########################################################################
 
+# Each rate-limit list is of rule tuples (interval_secs, limit).
+# No more than `limit` actions are allowed in any period of `interval_secs`
+# seconds, and all rules from a list apply simultaneously.
+# Rules must be in sorted order by `interval_secs`.
+
+# These limits apply to the respective actions on this
+# Zulip installation as a whole.
+RATE_LIMITS_SITEWIDE = dict(
+    create_realm=[(3600, 2), (86400, 20)],
+)
+
+# This rules list applies to web/API requests from a given user.
 RATE_LIMITING_RULES = [
     (60, 100),  # 100 requests max every minute
 ]
+
+# This disables rate-limiting of requests.
 DEBUG_RATE_LIMITING = DEBUG
+
 REDIS_PASSWORD = get_secret('redis_password')
 
 ########################################################################
