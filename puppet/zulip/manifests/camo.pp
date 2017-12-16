@@ -15,4 +15,13 @@ class zulip::camo {
     mode => 644,
     content => template("zulip/camo_defaults.template.erb"),
   }
+
+  file { "/etc/cron.d/camo-autoheal":
+    # TODO require?
+    ensure => file,
+    owner => "root",
+    group => "root",
+    mode => 644,
+    source => "puppet:///modules/zulip/cron.d/camo-autoheal",
+  }
 }

@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+
+# Every few seconds for 1 minute, each minute, restart camo if not running.
+* * * * * root for i in {0..11}; do [ -r /var/run/camo.pid ] && kill -0 $(cat /var/run/camo.pid) || service camo restart; sleep 5; done
