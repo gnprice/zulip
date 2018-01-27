@@ -151,11 +151,9 @@ class HomeTest(ZulipTestCase):
             "subscriptions",
             "test_suite",
             "timezone",
-            "total_uploads_size",
             "twenty_four_hour_time",
             "unread_msgs",
             "unsubscribed",
-            "upload_quota",
             "use_websockets",
             "user_id",
             "zulip_version",
@@ -246,7 +244,7 @@ class HomeTest(ZulipTestCase):
         with queries_captured() as queries2:
             result = self._get_home_page()
 
-        self.assert_length(queries2, 35)
+        self.assert_length(queries2, 34)
 
         # Do a sanity check that our new streams were in the payload.
         html = result.content.decode('utf-8')
