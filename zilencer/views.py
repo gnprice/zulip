@@ -182,11 +182,10 @@ def add_payment_method(request: HttpRequest) -> HttpResponse:
     except StripeError as e:
         billing_logger.error("Stripe error: %d %s", e.http_status, e.__class__.__name__)
         if isinstance(e, CardError):
-            ctx["error_message"] = e.json_body.get('error', {}).get('message')
+            return json_error(e.json_body.get('error', {}).get('message'))
         else:
-            ctx["error_message"] = _("Something went wrong. Please try again or email us at %s."
-                                     % (settings.ZULIP_ADMINISTRATOR,))
-        return json_error(ctx["error_message"])
+            return json_error(_("Something went wrong. Please try again or email us at %s."
+                                % (settings.ZULIP_ADMINISTRATOR,)))
     except Exception as e:
         billing_logger.exception("Uncaught error in billing")
         raise
