@@ -41,6 +41,8 @@ class AnalyticsTestCase(TestCase):
         self.name_counter = 100
         # used as defaults in self.assertCountEquals
         self.current_property = None  # type: Optional[str]
+        from zerver.management.commands.nullabilize_doomed_fields import nullabilize_all
+        nullabilize_all()
 
     # Lightweight creation of users, streams, and messages
     def create_user(self, **kwargs: Any) -> UserProfile:

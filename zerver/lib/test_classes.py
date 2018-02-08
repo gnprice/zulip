@@ -100,6 +100,12 @@ class ZulipTestCase(TestCase):
     DEFAULT_SUBDOMAIN = "zulip"
     DEFAULT_REALM = Realm.objects.get(string_id='zulip')
 
+    @classmethod
+    def setUpClass(cls: Any, *args: Any, **kwargs: Any) -> None:
+        super(ZulipTestCase, cls).setUpClass(*args, **kwargs)
+        from zerver.management.commands.nullabilize_doomed_fields import nullabilize_all
+        nullabilize_all()
+
     def set_http_host(self, kwargs: Dict[str, Any]) -> None:
         if 'subdomain' in kwargs:
             kwargs['HTTP_HOST'] = Realm.host_for_subdomain(kwargs['subdomain'])
