@@ -52,6 +52,7 @@ EOF
 )
 
 # Clear memcached to avoid contamination from previous database state
-"$(dirname "$0")/flush-memcached"
+service memcached restart
+# "$(dirname "$0")/flush-memcached"
 
 echo "Database created"
