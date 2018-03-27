@@ -662,13 +662,63 @@ def api_dev_get_emails(request: HttpRequest) -> HttpResponse:
     return json_success(dict(direct_admins=[u.email for u in users if u.is_realm_admin],
                              direct_users=[u.email for u in users if not u.is_realm_admin]))
 
+import inspect
+import sys
+@sys.settrace
+def tr(f, e, a):
+    if f.f_code.co_filename.endswith('zerver/views/auth.py'):
+        print("tracing!")
+        return trace_lines
+    if e == 'call':
+        if 'zerver/views/auth.py' in f.f_code.co_filename:
+            print("tracing? {}".format(f.f_code.co_name))
+        if 'api_key' in f.f_code.co_name:
+            print("tracing!")
+            return trace_lines
+    return tr
+
+target_code = None
+def trace_lines(f, e, a):
+    if f.f_code.co_filename.startswith("/srv/zulip/"):
+        # print("code {} vs {}".format(f.f_code, target_code))
+        if f.f_back and f.f_back.f_back and f.f_back.f_back.f_code is target_code:
+            print("{} {}:{} in {}".format(e, f.f_code.co_filename, f.f_lineno, f.f_code.co_name))
+            if e == "exception":
+                import traceback
+                print("  {}".format(a))
+                traceback.print_exception(*a)
+    return trace_lines
+
+import contextlib
+@contextlib.contextmanager
+def with_trace_lines():
+    global target_code
+    target_code = inspect.stack()[3][0].f_code
+    print(target_code)
+    sys.settrace(trace_lines)
+    try:
+        yield
+    finally:
+        sys.settrace(tr)
+        target_code = None
+
 @csrf_exempt
 @require_post
 @has_request_variables
+@with_trace_lines()
 def api_fetch_api_key(request: HttpRequest, username: str=REQ(), password: str=REQ()) -> HttpResponse:
+    f = inspect.currentframe()
+    if f.f_code.co_filename.endswith('zerver/views/auth.py'):
+        print("ayup")
+    print("f_code: {}".format(f.f_code))
+    print(f.f_back)
+    print(f.f_back.f_back.f_code)
+    print("what: {} {} {}".format(f.f_code.co_name, f.f_code.co_filename, f.f_trace))
     return_data = {}  # type: Dict[str, bool]
     subdomain = get_subdomain(request)
     realm = get_realm(subdomain)
+    f = inspect.currentframe()
+    print("what3: {} {} {}".format(f.f_code.co_name, f.f_code.co_filename, f.f_trace))
     if username == "google-oauth2-token":
         # This code path is auth for the legacy Android app
         user_profile = authenticate(google_oauth2_token=password,
@@ -714,6 +764,8 @@ def api_fetch_api_key(request: HttpRequest, username: str=REQ(), password: str=R
     request._email = user_profile.email
 
     return json_success({"api_key": user_profile.api_key, "email": user_profile.email})
+
+print(api_fetch_api_key.__code__)
 
 def get_auth_backends_data(request: HttpRequest) -> Dict[str, Any]:
     """Returns which authentication methods are enabled on the server"""
