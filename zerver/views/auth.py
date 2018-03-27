@@ -681,7 +681,8 @@ target_code = None
 def trace_lines(f, e, a):
     if f.f_code.co_filename.startswith("/srv/zulip/"):
         # print("code {} vs {}".format(f.f_code, target_code))
-        if f.f_back and f.f_back.f_back and f.f_back.f_back.f_code is target_code:
+        if inspect.getouterframes(f)[3][0].f_code is target_code:
+#        if f.f_back and f.f_back.f_back and f.f_back.f_back.f_code is target_code:
             print("{} {}:{} in {}".format(e, f.f_code.co_filename, f.f_lineno, f.f_code.co_name))
             if e == "exception":
                 import traceback
@@ -704,8 +705,8 @@ def with_trace_lines():
 
 @csrf_exempt
 @require_post
-@has_request_variables
 @with_trace_lines()
+@has_request_variables
 def api_fetch_api_key(request: HttpRequest, username: str=REQ(), password: str=REQ()) -> HttpResponse:
     f = inspect.currentframe()
     if f.f_code.co_filename.endswith('zerver/views/auth.py'):
