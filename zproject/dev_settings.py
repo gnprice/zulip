@@ -24,7 +24,7 @@ if EXTERNAL_HOST is None:
         # Serve the main dev realm at the literal name "localhost",
         # so it works out of the box even when not on the Internet.
         REALM_HOSTS = {
-            'zulip': 'localhost:9991'
+            'zulip': '10.0.3.50:9991'
         }
 else:
     REALM_HOSTS = {
