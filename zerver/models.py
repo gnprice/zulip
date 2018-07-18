@@ -148,16 +148,16 @@ class Realm(models.Model):
     SUBDOMAIN_FOR_ROOT_DOMAIN = ''
 
     name = models.CharField(max_length=MAX_REALM_NAME_LENGTH, null=True)  # type: Optional[str]
-    string_id = models.CharField(max_length=MAX_REALM_SUBDOMAIN_LENGTH, unique=True)  # type: str
-    restricted_to_domain = models.BooleanField(default=False)  # type: bool
+    string_id  = models.CharField(max_length=MAX_REALM_SUBDOMAIN_LENGTH, unique=True)  # type: str
+    restricted_to_domain  = models.BooleanField(default=False)  # type: bool
     invite_required = models.BooleanField(default=True)  # type: bool
     invite_by_admins_only = models.BooleanField(default=False)  # type: bool
-    inline_image_preview = models.BooleanField(default=True)  # type: bool
-    inline_url_embed_preview = models.BooleanField(default=True)  # type: bool
+    inline_image_preview  = models.BooleanField(default=True)  # type: bool
+    inline_url_embed_preview  = models.BooleanField(default=True)  # type: bool
     create_stream_by_admins_only = models.BooleanField(default=False)  # type: bool
     add_emoji_by_admins_only = models.BooleanField(default=False)  # type: bool
     mandatory_topics = models.BooleanField(default=False)  # type: bool
-    show_digest_email = models.BooleanField(default=True)  # type: bool
+    show_digest_email  = models.BooleanField(default=True)  # type: bool
     name_changes_disabled = models.BooleanField(default=False)  # type: bool
     email_changes_disabled = models.BooleanField(default=False)  # type: bool
     disallow_disposable_email_addresses = models.BooleanField(default=True)  # type: bool
@@ -170,7 +170,7 @@ class Realm(models.Model):
     DEFAULT_MESSAGE_CONTENT_EDIT_LIMIT_SECONDS = 600  # if changed, also change in admin.js, setting_org.js
     message_content_edit_limit_seconds = models.IntegerField(default=DEFAULT_MESSAGE_CONTENT_EDIT_LIMIT_SECONDS)  # type: int
     message_retention_days = models.IntegerField(null=True)  # type: Optional[int]
-    allow_edit_history = models.BooleanField(default=True)  # type: bool
+    allow_edit_history  = models.BooleanField(default=True)  # type: bool
     DEFAULT_COMMUNITY_TOPIC_EDITING_LIMIT_SECONDS = 86400
     allow_community_topic_editing = models.BooleanField(default=True)  # type: bool
     default_twenty_four_hour_time = models.BooleanField(default=False)  # type: bool
@@ -194,9 +194,9 @@ class Realm(models.Model):
     default_language = models.CharField(default=u'en', max_length=MAX_LANGUAGE_ID_LENGTH)  # type: str
     authentication_methods = BitField(flags=AUTHENTICATION_FLAGS,
                                       default=2**31 - 1)  # type: BitHandler
-    waiting_period_threshold = models.PositiveIntegerField(default=0)  # type: int
+    waiting_period_threshold  = models.PositiveIntegerField(default=0)  # type: int
     _max_invites = models.IntegerField(null=True, db_column='max_invites')  # type: Optional[int]
-    message_visibility_limit = models.IntegerField(null=True)  # type: Optional[int]
+    message_visibility_limit  = models.IntegerField(null=True)  # type: Optional[int]
     # See upload_quota_bytes; don't interpret upload_quota_gb directly.
     upload_quota_gb = models.IntegerField(null=True)  # type: Optional[int]
     video_chat_provider = models.CharField(default=u"Jitsi", max_length=MAX_VIDEO_CHAT_PROVIDER_LENGTH)
@@ -373,7 +373,7 @@ def name_changes_disabled(realm: Optional[Realm]) -> bool:
         return settings.NAME_CHANGES_DISABLED
     return settings.NAME_CHANGES_DISABLED or realm.name_changes_disabled
 
-class RealmDomain(models.Model):
+class  RealmDomain(models.Model):
     realm = models.ForeignKey(Realm, on_delete=CASCADE)  # type: Realm
     # should always be stored lowercase
     domain = models.CharField(max_length=80, db_index=True)  # type: str
@@ -440,7 +440,7 @@ class RealmEmoji(models.Model):
     name = models.TextField(validators=[MinLengthValidator(1),
                                         RegexValidator(regex=r'^[0-9a-z.\-_]+(?<![.\-_])$',
                                                        message=_("Invalid characters in emoji name"))])  # type: str
-    file_name = models.TextField(db_index=True, null=True, blank=True)  # type: Optional[str]
+    file_name  = models.TextField(db_index=True, null=True, blank=True)  # type: Optional[str]
     deactivated = models.BooleanField(default=False)  # type: bool
 
     PATH_ID_TEMPLATE = "{realm_id}/emoji/images/{emoji_file_name}"
@@ -517,7 +517,7 @@ def filter_format_validator(value: str) -> None:
         raise ValidationError('URL format string must be in the following format: '
                               r'`https://example.com/%(\w+)s`')
 
-class RealmFilter(models.Model):
+class  RealmFilter(models.Model):
     realm = models.ForeignKey(Realm, on_delete=CASCADE)  # type: Realm
     pattern = models.TextField(validators=[filter_pattern_validator])  # type: str
     url_format_string = models.TextField(validators=[URLValidator(), filter_format_validator])  # type: str
@@ -599,21 +599,21 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         EMBEDDED_BOT,
     ]
 
-    # Fields from models.AbstractUser minus last_name and first_name,
+    # Fields (which fields below?) from models.AbstractUser minus last_name and first_name,
     # which we don't use; email is modified to make it indexed and unique.
     email = models.EmailField(blank=False, db_index=True)  # type: str
-    delivery_email = models.EmailField(blank=False, db_index=True)  # type: str
-    is_staff = models.BooleanField(default=False)  # type: bool
-    is_active = models.BooleanField(default=True, db_index=True)  # type: bool
+    delivery_email  = models.EmailField(blank=False, db_index=True)  # type: str
+    is_staff  = models.BooleanField(default=False)  # type: bool
+    is_active  = models.BooleanField(default=True, db_index=True)  # type: bool
     is_realm_admin = models.BooleanField(default=False, db_index=True)  # type: bool
     is_bot = models.BooleanField(default=False, db_index=True)  # type: bool
-    is_guest = models.BooleanField(default=False, db_index=True)  # type: bool
+    is_guest  = models.BooleanField(default=False, db_index=True)  # type: bool
     bot_type = models.PositiveSmallIntegerField(null=True, db_index=True)  # type: Optional[int]
-    is_api_super_user = models.BooleanField(default=False, db_index=True)  # type: bool
+    is_api_super_user  = models.BooleanField(default=False, db_index=True)  # type: bool
     date_joined = models.DateTimeField(default=timezone_now)  # type: datetime.datetime
-    is_mirror_dummy = models.BooleanField(default=False)  # type: bool
+    is_mirror_dummy  = models.BooleanField(default=False)  # type: bool
     bot_owner = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)  # type: Optional[UserProfile]
-    long_term_idle = models.BooleanField(default=False, db_index=True)  # type: bool
+    long_term_idle  = models.BooleanField(default=False, db_index=True)  # type: bool
 
     USERNAME_FIELD = 'email'
     MAX_NAME_LENGTH = 100
@@ -630,7 +630,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     realm = models.ForeignKey(Realm, on_delete=CASCADE)  # type: Realm
     api_key = models.CharField(max_length=API_KEY_LENGTH)  # type: str
     tos_version = models.CharField(null=True, max_length=10)  # type: Optional[str]
-    last_active_message_id = models.IntegerField(null=True)  # type: Optional[int]
+    last_active_message_id  = models.IntegerField(null=True)  # type: Optional[int]
 
     ### Notifications settings. ###
 
@@ -654,7 +654,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     ###
 
-    last_reminder = models.DateTimeField(default=None, null=True)  # type: Optional[datetime.datetime]
+    last_reminder  = models.DateTimeField(default=None, null=True)  # type: Optional[datetime.datetime]
     rate_limits = models.CharField(default=u"", max_length=100)  # type: str # comma-separated list of range:max pairs
 
     # Default streams
@@ -671,7 +671,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     default_language = models.CharField(default=u'en', max_length=MAX_LANGUAGE_ID_LENGTH)  # type: str
     high_contrast_mode = models.BooleanField(default=False)  # type: bool
     night_mode = models.BooleanField(default=False)  # type: bool
-    translate_emoticons = models.BooleanField(default=False)  # type: bool
+    translate_emoticons  = models.BooleanField(default=False)  # type: bool
     dense_mode = models.BooleanField(default=True)  # type: bool
 
     # Hours to wait before sending another email to a user
@@ -955,7 +955,7 @@ class Stream(models.Model):
     realm = models.ForeignKey(Realm, db_index=True, on_delete=CASCADE)  # type: Realm
     invite_only = models.NullBooleanField(default=False)  # type: Optional[bool]
     history_public_to_subscribers = models.BooleanField(default=False)  # type: bool
-    is_web_public = models.BooleanField(default=False)  # type: bool
+    is_web_public  = models.BooleanField(default=False)  # type: bool
 
     # The unique thing about Zephyr public streams is that we never list their
     # users.  We may try to generalize this concept later, but for now
@@ -976,7 +976,7 @@ class Stream(models.Model):
 
     date_created = models.DateTimeField(default=timezone_now)  # type: datetime.datetime
     deactivated = models.BooleanField(default=False)  # type: bool
-    is_announcement_only = models.BooleanField(default=False)  # type: bool
+    is_announcement_only  = models.BooleanField(default=False)  # type: bool
 
     def __str__(self) -> str:
         return "<Stream: %s>" % (self.name,)
@@ -1182,14 +1182,14 @@ def get_stream_recipients(stream_ids: List[int]) -> List[Recipient]:
 class AbstractMessage(models.Model):
     sender = models.ForeignKey(UserProfile, on_delete=CASCADE)  # type: UserProfile
     recipient = models.ForeignKey(Recipient, on_delete=CASCADE)  # type: Recipient
-    subject = models.CharField(max_length=MAX_SUBJECT_LENGTH, db_index=True)  # type: str
+    subject  = models.CharField(max_length=MAX_SUBJECT_LENGTH, db_index=True)  # type: str
     content = models.TextField()  # type: str
     rendered_content = models.TextField(null=True)  # type: Optional[str]
     rendered_content_version = models.IntegerField(null=True)  # type: Optional[int]
     pub_date = models.DateTimeField('date published', db_index=True)  # type: datetime.datetime
     sending_client = models.ForeignKey(Client, on_delete=CASCADE)  # type: Client
     last_edit_time = models.DateTimeField(null=True)  # type: Optional[datetime.datetime]
-    edit_history = models.TextField(null=True)  # type: Optional[str]
+    edit_history  = models.TextField(null=True)  # type: Optional[str]
     has_attachment = models.BooleanField(default=False, db_index=True)  # type: bool
     has_image = models.BooleanField(default=False, db_index=True)  # type: bool
     has_link = models.BooleanField(default=False, db_index=True)  # type: bool
@@ -1203,7 +1203,7 @@ class AbstractMessage(models.Model):
                                        self.subject, self.sender)
 
 
-class ArchivedMessage(AbstractMessage):
+class  ArchivedMessage(AbstractMessage):
     archive_timestamp = models.DateTimeField(default=timezone_now, db_index=True)  # type: datetime.datetime
 
 
@@ -1337,8 +1337,8 @@ post_save.connect(flush_submessage, sender=SubMessage)
 class Reaction(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=CASCADE)  # type: UserProfile
     message = models.ForeignKey(Message, on_delete=CASCADE)  # type: Message
-    emoji_name = models.TextField()  # type: str
-    emoji_code = models.TextField()  # type: str
+    emoji_name  = models.TextField()  # type: str
+    emoji_code  = models.TextField()  # type: str
 
     UNICODE_EMOJI       = u'unicode_emoji'
     REALM_EMOJI         = u'realm_emoji'
@@ -1433,7 +1433,7 @@ class AbstractAttachment(models.Model):
     path_id = models.TextField(db_index=True, unique=True)  # type: str
     owner = models.ForeignKey(UserProfile, on_delete=CASCADE)  # type: UserProfile
     realm = models.ForeignKey(Realm, blank=True, null=True, on_delete=CASCADE)  # type: Optional[Realm]
-    is_realm_public = models.BooleanField(default=False)  # type: bool
+    is_realm_public  = models.BooleanField(default=False)  # type: bool
     create_time = models.DateTimeField(default=timezone_now,
                                        db_index=True)  # type: datetime.datetime
     size = models.IntegerField(null=True)  # type: Optional[int]
@@ -1517,8 +1517,8 @@ def get_old_unclaimed_attachments(weeks_ago: int) -> Sequence[Attachment]:
 class Subscription(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=CASCADE)  # type: UserProfile
     recipient = models.ForeignKey(Recipient, on_delete=CASCADE)  # type: Recipient
-    active = models.BooleanField(default=True)  # type: bool
-    in_home_view = models.NullBooleanField(default=True)  # type: Optional[bool]
+    active  = models.BooleanField(default=True)  # type: bool
+    in_home_view  = models.NullBooleanField(default=True)  # type: Optional[bool]
 
     DEFAULT_STREAM_COLOR = u"#c2c2c2"
     color = models.CharField(max_length=10, default=DEFAULT_STREAM_COLOR)  # type: str
@@ -1685,7 +1685,7 @@ class UserPresence(models.Model):
 
     # Valid statuses
     ACTIVE = 1
-    IDLE = 2
+    IDLE  = 2
 
     timestamp = models.DateTimeField('presence changed')  # type: datetime.datetime
     status = models.PositiveSmallIntegerField(default=ACTIVE)  # type: int
@@ -2052,7 +2052,7 @@ class CustomProfileField(models.Model):
     hint = models.CharField(max_length=HINT_MAX_LENGTH, default='', null=True)  # type: Optional[str]
     # There is no performance overhead of using TextField in PostGreSQL.
     # See https://www.postgresql.org/docs/9.0/static/datatype-character.html
-    field_data = models.TextField(default='', null=True)  # type: Optional[str]
+    field_data  = models.TextField(default='', null=True)  # type: Optional[str]
 
     SHORT_TEXT = 1
     LONG_TEXT = 2
