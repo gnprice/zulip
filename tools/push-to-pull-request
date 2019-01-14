@@ -69,10 +69,16 @@ pr_jq () {
     echo "$pr_details" | jq "$@"
 }
 
-if [ "$(pr_jq -r .message)" = "Not Found" ]; then
-    echo "error: invalid PR URL: $pr_url" >&2
-    exit 1
-fi
+case "$(pr_jq -r .message)" in
+    "Not Found")
+        echo "error: invalid PR URL: $pr_url" >&2
+        exit 1
+        ;;
+    "API rate limit exceeded"*)
+        echo "GitHub error: $(pr_jq -r .message)" >&2
+        exit 1
+        ;;
+esac
 
 if [ "$(pr_jq .maintainer_can_modify)" != "true" ]; then
     # This happens when the PR has already been merged or closed, or
