@@ -89,8 +89,10 @@ if [ "$(pr_jq .maintainer_can_modify)" != "true" ]; then
     die "error: PR already closed, or contributor has disallowed pushing to branch"
 fi
 
-pr_head_repo_fq="$(pr_jq -r .head.repo.full_name)"
-pr_head_refname="$(pr_jq -r .head.ref)"
+pr_head_repo_fq="$(pr_jq -er .head.repo.full_name)" \
+    || die "error: missing .head.repo.full_name"
+pr_head_refname="$(pr_jq -er .head.ref)" \
+    || die "error: missing .head.ref"
 
 tracking_ref=
 if [ -n "$pseudo_remote" ]; then
