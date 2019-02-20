@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+die () {
+    echo >&2 "$1"
+    exit 1
+}
+
 usage () {
     cat >&2 <<EOF
 usage: $0 PULL_REQUEST_ID [REMOTE]
@@ -54,8 +59,7 @@ if [ -z "$repo_fq" ]; then
     # We're pretty specific about what we expect the URL to look like;
     # there are probably more cases we could legitimately cover, which
     # we can add if/when they come up for someone.
-    echo "error: couldn't parse remote URL as GitHub repo" >&2
-    exit 1
+    die "error: couldn't parse remote URL as GitHub repo"
 fi
 
 # See https://developer.github.com/v3/pulls/#get-a-single-pull-request .
@@ -70,8 +74,7 @@ pr_jq () {
 }
 
 if [ "$(pr_jq -r .message)" = "Not Found" ]; then
-    echo "error: invalid PR URL: $pr_url" >&2
-    exit 1
+    die "error: invalid PR URL: $pr_url"
 fi
 
 if [ "$(pr_jq .maintainer_can_modify)" != "true" ]; then
@@ -83,8 +86,7 @@ if [ "$(pr_jq .maintainer_can_modify)" != "true" ]; then
     # manual equivalent of this script for many different
     # contributors, none have ever chosen this setting), but give a
     # decent error message if it does happen.
-    echo "error: PR already closed, or contributor has disallowed pushing to branch" >&2
-    exit 1
+    die "error: PR already closed, or contributor has disallowed pushing to branch"
 fi
 
 pr_head_repo_fq="$(pr_jq -r .head.repo.full_name)"
