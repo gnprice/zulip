@@ -344,7 +344,7 @@ DEFAULT_SETTINGS.update({
     # portion, so only receive this many removals.  Lower values mitigate
     # server congestion and client battery use.  To batch unconditionally,
     # set to 1.
-    'MAX_UNBATCHED_REMOVE_NOTIFICATIONS': 10,
+    'MAX_UNBATCHED_REMOVE_NOTIFICATIONS': 1,
 
     # Limits related to the size of file uploads; last few in MB.
     'DATA_UPLOAD_MAX_MEMORY_SIZE': 25 * 1024 * 1024,
