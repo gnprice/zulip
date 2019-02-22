@@ -615,7 +615,7 @@ def get_remove_payload_gcm(user_profile: UserProfile, message_ids: List[int]) ->
         # `zulip_message_id` and ignore `zulip_message_ids`.  Do our best.
         'zulip_message_id': message_ids[0],
     })
-    gcm_options = {'priority': 'normal'}
+    gcm_options = {'priority': 'high'}
     return gcm_payload, gcm_options
 
 def handle_remove_push_notification(user_profile_id: int, message_ids: List[int]) -> None:
