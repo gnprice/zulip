@@ -1,5 +1,7 @@
 var typing_status = (function () {
 
+var _ = require("underscore");
+
 var exports = {};
 
 // See docs/subsystems/typing-indicators.md for details on typing indicators.
@@ -138,4 +140,3 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = typing_status;
 }
-window.typing_status = typing_status;
