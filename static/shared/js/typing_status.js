@@ -111,7 +111,7 @@ export function handle_text_input(worker) {
         stop_last_notification(worker);
     }
 
-    if (!worker.is_valid_conversation(new_recipient)) {
+    if (!new_recipient || !worker.is_valid_conversation()) {
         // If we are not talking to somebody we care about,
         // then there is no more action to take.
         return;

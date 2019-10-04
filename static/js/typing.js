@@ -33,12 +33,6 @@ function get_user_ids_array() {
 }
 
 function is_valid_conversation(user_ids_array) {
-    // TODO: Check to make sure we're in a PM conversation
-    //       with valid emails.
-    if (!user_ids_array) {
-        return false;
-    }
-
     var compose_empty = !compose_state.has_message_content();
     if (compose_empty) {
         return false;
