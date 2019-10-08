@@ -43,6 +43,11 @@ function is_valid_conversation(user_ids_array) {
         return true;
     }
 
+    var compose_empty = !compose_state.has_message_content();
+    if (compose_empty) {
+        return false;
+    }
+
     return true;
 }
 
