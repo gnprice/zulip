@@ -91,25 +91,25 @@ export function handle_text_input(worker) {
     var new_recipient = worker.get_recipient();
     var current_recipient = state.current_recipient;
 
-    if (current_recipient) {
-        // We need to use _.isEqual for comparisons; === doesn't work
-        // on arrays.
-        if (_.isEqual(new_recipient, current_recipient)) {
-            // Nothing has really changed, except we may need
-            // to send a ping to the server.
-            maybe_ping_server(worker, new_recipient);
-
-            // We can also extend out our idle time.
-            start_or_extend_idle_timer(worker);
-
-            return;
-        }
-
-        // We apparently stopped talking to our old recipient,
-        // so we must stop the old notification.  Don't return
-        // yet, because we may have a new recipient.
-        stop_last_notification(worker);
+    if (!new_recipient && !current_recipient) {
+        // Nothing to do.
+        return;
     }
+
+    // We need to use _.isEqual for comparisons; === doesn't work
+    // on arrays.
+    if (_.isEqual(new_recipient, current_recipient)) {
+        // Nothing has really changed, except we may need
+        // to send a ping to the server.
+        maybe_ping_server(worker, new_recipient);
+        // We can also extend out our idle time.
+        start_or_extend_idle_timer(worker);
+        return;
+    }
+
+    // We apparently stopped talking to our old recipient,
+    // so we must stop the old notification.
+    stop(worker);
 
     if (!new_recipient) {
         // If we are not talking to somebody we care about,
