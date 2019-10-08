@@ -23,7 +23,7 @@ var TYPING_STOPPED_WAIT_PERIOD = 5000; // 5s
         notify_server_stop
         get_recipient
         get_current_time
-        is_valid_conversation
+        is_message_content_empty
 
     See typing.js for the implementations of the above. (Our
     node tests also act as workers and will stub those functions
@@ -111,9 +111,13 @@ export function handle_text_input(worker) {
         stop_last_notification(worker);
     }
 
-    if (!new_recipient || !worker.is_valid_conversation()) {
+    if (!new_recipient) {
         // If we are not talking to somebody we care about,
         // then there is no more action to take.
+        return;
+    }
+
+    if (worker.is_message_content_empty()) {
         return;
     }
 

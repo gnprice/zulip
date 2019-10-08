@@ -32,13 +32,8 @@ function get_user_ids_array() {
     return people.user_ids_string_to_ids_array(user_ids_string);
 }
 
-function is_valid_conversation(user_ids_array) {
-    var compose_empty = !compose_state.has_message_content();
-    if (compose_empty) {
-        return false;
-    }
-
-    return true;
+function is_message_content_empty() {
+    return !compose_state.has_message_content();
 }
 
 function get_current_time() {
@@ -57,7 +52,7 @@ exports.get_recipient = get_user_ids_array;
 exports.initialize = function () {
     var worker = {
         get_recipient: exports.get_recipient,
-        is_valid_conversation: is_valid_conversation,
+        is_message_content_empty: is_message_content_empty,
         get_current_time: get_current_time,
         notify_server_start: notify_server_start,
         notify_server_stop: notify_server_stop,

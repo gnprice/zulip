@@ -22,7 +22,7 @@ run_test('basics', () => {
     // invalid conversation basically does nothing
     var worker = {
         get_recipient: return_alice,
-        is_valid_conversation: return_false,
+        is_message_content_empty: return_true,
     };
     typing_status.handle_text_input(worker);
 
@@ -73,7 +73,7 @@ run_test('basics', () => {
 
     worker = {
         get_recipient: return_alice,
-        is_valid_conversation: return_true,
+        is_message_content_empty: return_false,
         get_current_time: returns_time(5),
         notify_server_start: notify_server_start,
         notify_server_stop: notify_server_stop,
@@ -206,7 +206,7 @@ run_test('basics', () => {
     worker.get_recipient = function () {
         return 'not-alice';
     };
-    worker.is_valid_conversation = return_false;
+    worker.is_message_content_empty = return_true;
     call_handler();
     assert.deepEqual(typing_status.state, {
         next_send_start_time: undefined,
@@ -224,7 +224,7 @@ run_test('basics', () => {
     worker.get_recipient = function () {
         return 'another-bogus-one';
     };
-    worker.is_valid_conversation = return_false;
+    worker.is_message_content_empty = return_true;
     call_handler();
     assert.deepEqual(typing_status.state, {
         next_send_start_time: undefined,
@@ -240,7 +240,7 @@ run_test('basics', () => {
 
     // Start talking to alice again.
     worker.get_recipient = return_alice;
-    worker.is_valid_conversation = return_true;
+    worker.is_message_content_empty = return_false;
     worker.get_current_time = returns_time(170);
     call_handler();
     assert.deepEqual(typing_status.state, {
@@ -258,7 +258,7 @@ run_test('basics', () => {
 
     // Switch to bob now.
     worker.get_recipient = return_bob;
-    worker.is_valid_conversation = return_true;
+    worker.is_message_content_empty = return_false;
     worker.get_current_time = returns_time(171);
 
     worker.notify_server_start = function (recipient) {
@@ -283,7 +283,7 @@ run_test('basics', () => {
     // test that we correctly detect if worker.get_recipient
     // and typing_status.state.current_recipient are the same
     worker.get_recipient = typing.get_recipient;
-    worker.is_valid_conversation = () => false;
+    worker.is_message_content_empty = () => true;
     compose_pm_pill.get_user_ids_string = () => '1,2,3';
     typing_status.state.current_recipient = typing.get_recipient();
 
