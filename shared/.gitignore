@@ -1,0 +1,18 @@
+
+# Ordinarily these aren't present at all.  The case where they
+# appear is when running `yarn` here in shared/ in order to use
+# `yarn link` to refer to this worktree from a zulip-mobile
+# worktree.
+#
+# Because they don't take part in normal dev, test, or prod workflows,
+# we keep this yarn.lock out of the repo, to avoid giving a misleading
+# impression that it controls the versions we use.
+#
+# This does mean that the `yarn link` workflow risks getting a
+# different version of a zulip-shared dependency than the yarn.lock
+# in zulip-mobile would give it.  ¯\_(ツ)_/¯  This is the least-total-
+# hackiness solution found so far; less-hacky solutions welcome.
+# (NB that this is *only* an issue when using `yarn link`.  This never
+# arises in the webapp, and only in specific dev cases in zulip-mobile.)
+/yarn.lock
+/node_modules/
