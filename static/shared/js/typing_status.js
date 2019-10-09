@@ -91,8 +91,9 @@ export function handle_text_input(worker) {
     var new_recipient = worker.get_recipient();
     var current_recipient = state.current_recipient;
 
-    if (!new_recipient && !current_recipient) {
-        // Nothing to do.
+    if (!new_recipient) {
+        // We're not talking to anyone.  Stop existing notification, if any.
+        exports.stop(worker);
         return;
     }
 
@@ -110,12 +111,6 @@ export function handle_text_input(worker) {
     // We apparently stopped talking to our old recipient,
     // so we must stop the old notification.
     stop(worker);
-
-    if (!new_recipient) {
-        // If we are not talking to somebody we care about,
-        // then there is no more action to take.
-        return;
-    }
 
     if (worker.is_message_content_empty()) {
         return;
