@@ -113,6 +113,8 @@ export function handle_text_input(worker) {
     stop(worker);
 
     if (worker.is_message_content_empty()) {
+        // TODO this doesn't really make sense *here*; maybe at top of function?
+        // Or just remove this conditional entirely.
         return;
     }
 
