@@ -1,3 +1,5 @@
+// @flow strict-local
+
 /*
     We hand selected the following emojis a few years
     ago to be given extra precedence in our typeahead
@@ -30,12 +32,12 @@ export const popular_emojis = [
 
 const unicode_marks = /\p{M}/gu;
 
-export function remove_diacritics(s) {
+export function remove_diacritics(s: string): string {
     return s.normalize("NFKD").replace(unicode_marks, "");
 }
 
-function query_matches_string(query, source_str, split_char) {
-    source_str = remove_diacritics(source_str);
+function query_matches_string(query, source_str_, split_char) {
+    const source_str = remove_diacritics(source_str_);
 
     // If query doesn't contain a separator, we just want an exact
     // match where query is a substring of one of the target characters.
@@ -74,15 +76,15 @@ function query_matches_string(query, source_str, split_char) {
 // the entered string might be trying to match, e.g. for a user
 // account, there might be 2 attrs: their full name and their email.
 // * split_char is the separator for this syntax (e.g. ' ').
-export function query_matches_source_attrs(query, source, match_attrs, split_char) {
+export function query_matches_source_attrs<Attrs: string>(query: string, source: { [Attrs]: string, ... }, match_attrs: $ReadOnlyArray<Attrs>, split_char: string): boolean {
     return match_attrs.some((attr) => {
         const source_str = source[attr].toLowerCase();
         return query_matches_string(query, source_str, split_char);
     });
 }
 
-function clean_query(query) {
-    query = remove_diacritics(query);
+function clean_query(query_) {
+    let query = remove_diacritics(query_);
     // When `abc ` with a space at the end is typed in a
     // contenteditable widget such as the composebox PM section, the
     // space at the end was a `no break-space (U+00A0)` instead of
@@ -92,15 +94,15 @@ function clean_query(query) {
     return query;
 }
 
-export function clean_query_lowercase(query) {
-    query = query.toLowerCase();
+export function clean_query_lowercase(query_: string): string {
+    let query = query_.toLowerCase();
     query = clean_query(query);
     return query;
 }
 
-export function get_emoji_matcher(query) {
+export function get_emoji_matcher(query_: string): { emoji_name: string, ... } => boolean {
     // replaces spaces with underscores for emoji matching
-    query = query.replace(/ /g, "_");
+    let query = query_.replace(/ /g, "_");
     query = clean_query_lowercase(query);
 
     return function (emoji) {
@@ -108,7 +110,7 @@ export function get_emoji_matcher(query) {
     };
 }
 
-export function triage(query, objs, get_item = (x) => x) {
+export function triage<T>(query: string, objs: $ReadOnlyArray<T>, get_item: T => string): {| matches: T[], rest: T[] |} {
     /*
         We split objs into four groups:
 
@@ -147,7 +149,7 @@ export function triage(query, objs, get_item = (x) => x) {
     };
 }
 
-export function sort_emojis(objs, query) {
+export function sort_emojis<T: { emoji_code: string, emoji_name: string, ... }>(objs: $ReadOnlyArray<T>, query: string): T[] {
     const lowerQuery = query.toLowerCase();
 
     function decent_match(name) {
