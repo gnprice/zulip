@@ -81,6 +81,19 @@ export function clean_query_lowercase(query) {
     return query;
 }
 
+export function parse_unicode_emoji_as_unicode(emoji) {
+    if (emoji.reaction_type !== "unicode_emoji") {
+        throw new Error("parse_unicode_emoji_as_unicode: received non-Unicode emoji");
+    }
+
+    // For a description of this format, see the comment on `emoji_code`
+    // in `class AbstractEmoji` in `zerver/models.py`.
+    return emoji.emoji_code
+        .split("-")
+        .map((hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+        .join("");
+}
+
 export function get_emoji_matcher(query) {
     // replace spaces with underscores for emoji matching
     query = query.replace(/ /g, "_");
