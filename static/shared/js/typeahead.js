@@ -98,6 +98,18 @@ export function unicode_of_unicode_emoji_code(emoji_code) {
 }
 
 function emoji_matches_literally(query, emoji) {
+    // This logic does not do any special handling for things like
+    // skin-tone modifiers or gender modifiers, since Zulip does not
+    // currently support those: https://github.com/zulip/zulip/issues/992.
+    // Once support is added for that, we may want to come back here and
+    // modify this logic, if for instance, there is a default skin-tone
+    // setting in the webapp that we want to also surface here. (or
+    // perhaps it will be best to leave it as is - that's a product
+    // decision that's yet to be made.) For the time being, it seems
+    // better to not show the user anything if they've searched for an
+    // emoji with a modifier than it is to show them the non-modified
+    // emoji, hence the very simple matching.
+
     return (
         // TODO is emoji_type the right thing to check?  My kingdom for a type.
         emoji.emoji_type === "unicode" &&
