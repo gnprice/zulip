@@ -25,6 +25,7 @@ const emojis = [
     ...unicode_emojis.map(([emoji_code, emoji_name]) => ({
         emoji_name,
         emoji_code,
+        is_realm_emoji: false,
     })),
 ];
 

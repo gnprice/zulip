@@ -111,8 +111,8 @@ function emoji_matches_literally(query, emoji) {
     // emoji, hence the very simple matching.
 
     return (
-        // TODO is emoji_type the right thing to check?  My kingdom for a type.
-        emoji.emoji_type === "unicode" &&
+        // TODO clean this up
+        (emoji.emoji_type === "unicode" || emoji.is_realm_emoji === false) &&
         // TODO it'd be good to avoid parsing them all.  Perhaps invert it?
         unicode_of_unicode_emoji_code(emoji.emoji_code) === query
     );
