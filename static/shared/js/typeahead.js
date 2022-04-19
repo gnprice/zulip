@@ -97,13 +97,25 @@ export function unicode_of_unicode_emoji_code(emoji_code) {
         .join("");
 }
 
+function emoji_matches_literally(query, emoji) {
+    return (
+        // TODO is emoji_type the right thing to check?  My kingdom for a type.
+        emoji.emoji_type === "unicode" &&
+        // TODO it'd be good to avoid parsing them all.  Perhaps invert it?
+        unicode_of_unicode_emoji_code(emoji.emoji_code) === query
+    );
+}
+
 export function get_emoji_matcher(query) {
     // replace spaces with underscores for emoji matching
     query = query.replace(/ /g, "_");
     query = clean_query_lowercase(query);
 
     return function (emoji) {
-        return query_matches_source_attrs(query, emoji, ["emoji_name"], "_");
+        return (
+            emoji_matches_literally(query, emoji) ||
+            query_matches_source_attrs(query, emoji, ["emoji_name"], "_")
+        );
     };
 }
 
