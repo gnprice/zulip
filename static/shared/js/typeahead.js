@@ -161,10 +161,17 @@ export function sort_emojis(objs, query) {
         return popular_set.has(obj.emoji_code) && decent_match(obj.emoji_name);
     }
 
+    const literal_matches = [];
     const popular_emoji_matches = [];
     const others = [];
     for (const obj of objs) {
-        if (is_popular(obj)) {
+        if (
+            // TODO is this the right thing to check?  My kingdom for a type.
+            obj.emoji_type === "unicode" &&
+            unicode_of_unicode_emoji_code(obj.emoji_code) === query
+        ) {
+            literal_matches.push(obj);
+        } else if (is_popular(obj)) {
             popular_emoji_matches.push(obj);
         } else {
             others.push(obj);
@@ -173,5 +180,10 @@ export function sort_emojis(objs, query) {
 
     const triage_results = triage(query, others, (x) => x.emoji_name);
 
-    return [...popular_emoji_matches, ...triage_results.matches, ...triage_results.rest];
+    return [
+        ...literal_matches,
+        ...popular_emoji_matches,
+        ...triage_results.matches,
+        ...triage_results.rest,
+    ];
 }
