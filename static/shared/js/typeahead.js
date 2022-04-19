@@ -154,13 +154,19 @@ export function sort_emojis(objs, query) {
     }
 
     const popular_set = new Set(popular_emojis);
-
     function is_popular(obj) {
         return popular_set.has(obj.emoji_code) && decent_match(obj.emoji_name);
     }
 
-    const popular_emoji_matches = objs.filter((obj) => is_popular(obj));
-    const others = objs.filter((obj) => !is_popular(obj));
+    const popular_emoji_matches = [];
+    const others = [];
+    for (const obj of objs) {
+        if (is_popular(obj)) {
+            popular_emoji_matches.push(obj);
+        } else {
+            others.push(obj);
+        }
+    }
 
     const triage_results = triage(query, others, (x) => x.emoji_name);
 
