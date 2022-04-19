@@ -81,14 +81,17 @@ export function clean_query_lowercase(query) {
     return query;
 }
 
-export function parse_unicode_emoji_as_unicode(emoji) {
-    if (emoji.reaction_type !== "unicode_emoji") {
-        throw new Error("parse_unicode_emoji_as_unicode: received non-Unicode emoji");
-    }
-
+/**
+ * Convert the emoji_code of a Unicode emoji to the Unicode of the emoji.
+ *
+ * The argument must be the `emoji_code` of a Zulip Unicode emoji object.
+ * The `emoji_code` of a realm emoji or a Zulip extra emoji (i.e. `:zulip:`)
+ * will produce garbled results or an exception.
+ */
+export function unicode_of_unicode_emoji_code(emoji_code) {
     // For a description of this format, see the comment on `emoji_code`
     // in `class AbstractEmoji` in `zerver/models.py`.
-    return emoji.emoji_code
+    return emoji_code
         .split("-")
         .map((hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
         .join("");
