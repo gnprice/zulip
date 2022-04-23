@@ -3,7 +3,8 @@
   "version": "0.0.13",
   "license": "Apache-2.0",
   "scripts": {
-    "version": "git commit -am \"shared: Bump version to ${npm_package_version}\" && git tag \"shared-${npm_package_version}\""
+    "version": "tools/npm-version",
+    "postversion": "tools/npm-postversion"
   },
   "dependencies": {
     "katex": "^0.15.3",
