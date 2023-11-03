@@ -32,6 +32,8 @@ able to create and test your Zulip changes on top of changes to the
 upstream package, without waiting for the potentially lengthy code
 review and release process of the upstream dependency.
 
+### Sharing custom modifications in a PR
+
 You can do this forking the upstream project, making the changes on a
 branch in your fork, and then replacing the package's entry in
 `dev.in` or `prod.in` with an appropriate GitHub link to the branch
@@ -47,3 +49,19 @@ After that, you can follow the above process involving
 `./tools/update-locked-requirements` and the following steps to have
 the modified package installed in your dev environment, where it can
 be used for testing.
+
+### Developing custom modifications locally
+
+For a faster iteration cycle in local development, you can use a
+version of the upstream project that you edit in the same way as
+you edit the Zulip server's own code.
+
+TODO explain placing in /srv/zulip/PACKAGE
+
+Run `pip install --editable ./PACKAGE`.
+Then edit the package's code, restart `tools/run-dev`,
+and your change is live.
+
+(A nice further enhancement would be to make `tools/run-dev`
+automatically notice changes in the package the same way it
+notices changes in our own code.  But currently it doesn't.)
