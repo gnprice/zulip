@@ -257,6 +257,8 @@ def send_apple_push_notification(
         )
     payload_data = dict(modernize_apns_payload(payload_data))
     message = {**payload_data.pop("custom", {}), "aps": payload_data}
+    import json
+    # logger.info('APNs payload: %s', json.dumps(message, indent=2))
 
     for device in devices:
         if device.ios_app_id is None:
