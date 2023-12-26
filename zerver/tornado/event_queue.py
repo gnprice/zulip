@@ -56,7 +56,7 @@ from zerver.tornado.handlers import finish_handler, get_handler_by_id, handler_s
 DEFAULT_EVENT_QUEUE_TIMEOUT_SECS = 60 * 10
 # We garbage-collect every minute; this is totally fine given that the
 # GC scan takes ~2ms with 1000 event queues.
-EVENT_QUEUE_GC_FREQ_MSECS = 1000 * 60 * 1
+EVENT_QUEUE_GC_FREQ_MSECS = 1000 * 1
 
 # Capped limit for how long a client can request an event queue
 # to live
@@ -67,7 +67,7 @@ MAX_QUEUE_TIMEOUT_SECS = 7 * 24 * 60 * 60
 # client connection based on the below value.  We ensure that the
 # maximum timeout value is 55 seconds, to deal with crappy home
 # wireless routers that kill "inactive" http connections.
-HEARTBEAT_MIN_FREQ_SECS = 45
+HEARTBEAT_MIN_FREQ_SECS = 5
 
 
 def create_heartbeat_event() -> Dict[str, str]:
@@ -255,7 +255,7 @@ class ClientDescriptor:
 
     def expired(self, now: float) -> bool:
         return (
-            self.current_handler_id is None
+            True # self.current_handler_id is None
             and now - self.last_connection_time >= self.queue_timeout
         )
 
@@ -272,7 +272,7 @@ class ClientDescriptor:
             self.add_event(heartbeat_event)
 
         ioloop = tornado.ioloop.IOLoop.current()
-        interval = HEARTBEAT_MIN_FREQ_SECS + random.randint(0, 10)
+        interval = HEARTBEAT_MIN_FREQ_SECS + random.randint(0, 1)
         if self.client_type_name != "API: heartbeat test":
             self._timeout_handle = ioloop.call_later(interval, timeout_callback)
 
