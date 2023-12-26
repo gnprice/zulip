@@ -559,7 +559,7 @@ def gc_event_queues(port: int) -> None:
     # they are expired) and thus not have a current handler.
     do_gc_event_queues(to_remove, affected_users, affected_realms)
 
-    if settings.PRODUCTION:
+    if settings.PRODUCTION or to_remove:
         logging.info(
             "Tornado %d removed %d expired event queues owned by %d users in %.3fs."
             "  Now %d active queues, %s",
